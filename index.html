@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One Compiler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #fff;
+
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #666;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0d6efd;
+        }
+        body,html{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #222;
+            flex-direction: column;
+        }
+        main{
+            background-color:#f0f0f0;
+            width:98%;
+            height:95%;
+            display: flex;
+            flex-direction: row;
+            border-radius: 10px;
+            padding:10px;
+        }
+        textarea{
+            width:70%;
+            height:100%;
+            background-color: #444;
+            padding:10px;
+            border-radius: 10px 0px 0px 10px;
+            font-size: 18px;
+            overflow-y: scroll;
+            color:#fff;
+        }
+        aside{
+            width:30%;
+            height:100%;
+            background-color: #bbb;
+            border-radius: 0px 10px 10px 0px;
+            border-left: 10px solid #f0f0f0;
+            padding:10px
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <textarea contenteditable="true" id="code"></textarea>
+        <aside>
+            <div style="width:100%;display:flex;flex-direction:row;justify-content: space-between;">
+                <select id="lang" style="width:48%;height:40px;background-color:#f0f0f0;text-align:left;border-radius: 10px;display:flex;align-items: center;padding-left:10px" id="lang">
+                    <option value="5">Python</option>
+                    <option value="1">C#</option>
+                    <option value="4">Java</option>
+                    <option value="6">C</option>
+                    <option value="7">C++</option>
+                    <option value="8">Php</option>
+                    <option value="17">Javascript</option>
+                </select>
+                <button onclick="execute()" id="btn" style="width:48%;height:40px;border-radius: 10px;font-weight:900" class="btn btn-primary">Execute</button>
+            </div>
+            <div style="padding:10px;background-color:#fff;margin-top:10px;border-radius: 10px;height:91%;overflow-y: scroll;">
+                <div id="output" style="height:1000px;">Compiler is Ready!</div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        function execute(){
+            if(document.getElementById("code").value){
+                document.getElementById("btn").innerHTML="Executing..."
+                document.getElementById("btn").disabled = true; 
+                const encodedParams = new URLSearchParams();
+                encodedParams.append("LanguageChoice", document.getElementById("lang").value);
+                encodedParams.append("Program", document.getElementById("code").value);
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded',
+                        'X-RapidAPI-Key': '20a90f6031msh04cf71c1d3d383dp1e860djsn371237b4b419',
+                        'X-RapidAPI-Host': 'code-compiler.p.rapidapi.com'
+                    },
+                    body: encodedParams
+                };
+
+                fetch('https://code-compiler.p.rapidapi.com/v2', options)
+                .then(response => response.json())
+                .then(res => {
+                    if(res.Errors){
+                        document.body.style.backgroundColor="red"
+                        setTimeout(()=>{document.body.style.backgroundColor="#222"},5000)
+                        document.getElementById("output").innerHTML = ">> <span class='text-danger'>"+res.Errors+"</span>"
+                    }else{
+                        document.body.style.backgroundColor="green"
+                        setTimeout(()=>{document.body.style.backgroundColor="#222"},5000)
+                        document.getElementById("output").innerHTML = ">> "+res.Result
+                    }
+                    document.getElementById("btn").innerHTML="Execute"
+                    document.getElementById("btn").disabled = false; 
+                })
+                .catch(err => console.error(err));
+            }else{
+                alert("Type some coding and Try again")
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
